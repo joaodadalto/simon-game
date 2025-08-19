@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CADASTRO</title>
+
+    <style>
+             * {
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        form {
+            width: 300px;
+            margin: 200px auto;
+            text-align: center;
+        }
+
+        input {
+            display: block;
+            margin: 10px auto;
+            width: 250px;
+            height: 30px;
+        }
+
+       label {
+            display: block;        
+            width: 250px;          
+            margin: 10px auto 2px;
+            text-align: left;     
+            font-weight: bold;    
+        }
+        
+        .erro {
+            color: red;
+            font-weight: bold;
+        }
+
+        .sucesso {
+            color: green;
+            font-weight: bold;
+        }
+
+
+        
+    </style>
+</head>
+<body>
+
+    
+
+    <form id="cadastroForm">
+
+        <h3>Cadastro</h3>
+
+        <label for="nome">Nome</label>
+        <input type="text" id="nome">
+
+        <label for="email">E-mail</label>
+        <input type="email" id="email">
+
+        <label for="senha">Senha</label>
+        <input type="password" id="senha">
+
+        <label for="confirmarSenha">Confirme sua senha</label>
+        <input type="password" id="confirmarSenha">
+
+        <input type="submit">
+
+         <p id="mensagem"></p>
+    </form>
+
+   
+
+<script>
+    const form = document.getElementById("cadastroForm");
+    
+    function cadastrar(){
+        let nome = document.getElementById("nome").value.trim();
+        let email = document.getElementById("email").value.trim();
+        let senha = document.getElementById("senha").value.trim();
+        let confirmarSenha = document.getElementById("confirmarSenha").value.trim();
+        let mensagem = document.getElementById("mensagem");
+
+        if(!nome || !email || !senha || !confirmarSenha){
+            mensagem.textContent = "Preencha todos os campos";
+            mensagem.className = "erro";
+            return;
+        }
+
+        if(senha.length < 4){
+            mensagem.textContent = "A senha deve ter no mínimo 4 caracteres";
+            mensagem.className = "erro";
+            return;
+        }
+
+        if(senha !== confirmarSenha){
+            mensagem.textContent = "As senhas não são iguais";
+            mensagem.className = "erro";
+            return;
+        }
+
+        if (localStorage.getItem(email)) {
+            mensagem.textContent = "Usuário já cadastrado!";
+            mensagem.className = "erro";
+            return;
+        }
+
+        let usuarioObj = { nome, email, senha };
+        localStorage.setItem(nome, JSON.stringify(usuarioObj));
+
+        mensagem.textContent = "Cadastro realizado com sucesso!";
+        mensagem.className = "sucesso";
+
+        form.reset();
+    }
+
+    form.addEventListener("submit", function(e) {
+        e.preventDefault();
+        cadastrar();
+    });
+
+</script>
+
+
+</body>
+</html>
