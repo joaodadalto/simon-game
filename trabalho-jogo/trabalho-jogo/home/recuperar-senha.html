@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="imagens/simon-game.png" type="image/x-icon">
+  <title>Recuperar Senha - Simon Game</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Press Start 2P", cursive;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(#5c94fc, #8ed8ff);
+      color: #fff;
+      image-rendering: pixelated;
+      overflow: hidden;
+    }
+
+    form {
+      background: #1b1b1b;
+      border: 6px solid #ffcc00;
+      box-shadow: 0 0 0 6px #000, 0 0 0 12px #ff0000;
+      width: 90%;
+      max-width: 600px;
+      padding: 50px 40px;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h3 {
+      font-size: 22px;
+      color: #ffcc00;
+      margin-bottom: 35px;
+      text-shadow: 3px 3px #000;
+    }
+
+    input {
+      display: block;
+      margin: 15px auto;
+      width: 100%;
+      max-width: 400px;
+      padding: 18px 20px;
+      border: 4px solid #000;
+      background: #333;
+      color: #fff;
+      font-size: 14px;
+      text-align: center;
+      text-transform: uppercase;
+      box-shadow: inset -4px -4px 0 #000, inset 4px 4px 0 #666;
+      transition: 0.2s ease;
+    }
+
+    input::placeholder {
+      color: #aaa;
+    }
+
+    input:focus {
+      background: #555;
+      transform: scale(1.02);
+      box-shadow: inset -4px -4px 0 #000, inset 4px 4px 0 #999;
+    }
+
+    .btn-recuperar, .btn-cancelar {
+      display: block;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px 0;
+      border: 4px solid #000;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    .btn-recuperar {
+      background: #ff0000;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    .btn-recuperar:hover {
+      background: #ffcc00;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #ffaa00;
+    }
+
+    .btn-recuperar:disabled {
+      background: #666;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .btn-cancelar {
+      background: #00cc44;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    .btn-cancelar:hover {
+      background: #66ff66;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #33aa33;
+    }
+
+    #mensagem {
+      margin-top: 15px;
+      min-height: 20px;
+      font-weight: bold;
+      font-size: 12px;
+      text-shadow: 1px 1px #000;
+    }
+
+    .erro { color: #ff4d4d; }
+    .sucesso { color: #4ade80; }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 10px;
+      color: #fff;
+      text-shadow: 1px 1px #000;
+    }
+
+   
+    .cloud {
+      position: absolute;
+      top: 40px;
+      left: -120px;
+      width: 100px;
+      height: 50px;
+      background: #fff;
+      border: 4px solid #000;
+      border-radius: 10px;
+      animation: moveCloud 25s linear infinite;
+      image-rendering: pixelated;
+    }
+
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border: 4px solid #000;
+      border-radius: 10px;
+    }
+
+    .cloud::before {
+      width: 50px;
+      height: 30px;
+      top: -15px;
+      left: 10px;
+    }
+
+    .cloud::after {
+      width: 70px;
+      height: 40px;
+      top: 10px;
+      right: -25px;
+    }
+
+    @keyframes moveCloud {
+      from { left: -120px; }
+      to { left: 110%; }
+    }
+
+    @media (max-width: 600px) {
+      form {
+        padding: 30px 25px;
+      }
+
+      h3 {
+        font-size: 18px;
+      }
+
+      input, .btn-recuperar, .btn-cancelar {
+        font-size: 12px;
+        max-width: 100%;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cloud"></div>
+
+  <form id="recuperarForm">
+    <h3>RECUPERAR SENHA</h3>
+    <input type="email" id="email" placeholder="E-MAIL" required>
+    <p id="mensagem"></p>
+    <button type="submit" class="btn-recuperar">RECUPERAR SENHA</button>
+    <button type="button" class="btn-cancelar" id="btnCancelar">CANCELAR</button>
+    <footer>© 2025 - Simon Game</footer>
+  </form>
+
+  <script>
+    const form = document.getElementById("recuperarForm");
+    const mensagem = document.getElementById("mensagem");
+    const btnRecuperar = document.querySelector(".btn-recuperar");
+    const btnCancelar = document.getElementById("btnCancelar");
+
+    function validarEmail(email) {
+      const regex = /^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,}$/;
+      return regex.test(email);
+    }
+
+    function recuperar() {
+      const email = document.getElementById("email").value.trim();
+
+      if (!email) {
+        mensagem.textContent = "PREENCHA O CAMPO E-MAIL!";
+        mensagem.className = "erro";
+        return;
+      }
+
+      if (!validarEmail(email)) {
+        mensagem.textContent = "E-MAIL INVÁLIDO!";
+        mensagem.className = "erro";
+        return;
+      }
+
+      const usuarioSalvo = localStorage.getItem(email);
+      if (!usuarioSalvo) {
+        mensagem.textContent = "USUÁRIO NÃO ENCONTRADO!";
+        mensagem.className = "erro";
+        return;
+      }
+
+    
+      mensagem.textContent = "ENVIAMOS INSTRUÇÕES DE RECUPERAÇÃO PARA SEU E-MAIL.";
+      mensagem.className = "sucesso";
+      btnRecuperar.disabled = true; 
+      btnCancelar.textContent = "VOLTAR"; 
+    }
+
+    function voltar() {
+      window.location.href = "home.html";
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      recuperar();
+    });
+
+    btnCancelar.addEventListener("click", voltar);
+
+ 
+    document.getElementById("email").addEventListener("focus", () => {
+      mensagem.textContent = "";
+      mensagem.className = "";
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="imagens/simon-game.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <title>Simon Game</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Press Start 2P", cursive;
+    }
+
+    body {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(#5c94fc, #8ed8ff);
+      color: #fff;
+      image-rendering: pixelated;
+      overflow: hidden;
+      padding: 20px;
+      transition: background 1s ease; 
+    }
+
+    #user-info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 14px;
+      color: #ffcc00;
+      text-shadow: 2px 2px #000;
+    }
+
+    #btn-logout {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border: 4px solid #000;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      background: #00cc44;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    #btn-logout:hover {
+      background: #66ff66;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #33aa33;
+    }
+
+    #btn-toggle-sound {
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      padding: 10px 20px;
+      border: 4px solid #000;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      background: #ffcc00;
+      color: #000;
+      text-shadow: 2px 2px #fff;
+    }
+
+    #btn-toggle-sound:hover {
+      background: #ffaa00;
+      color: #fff;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #ff8800;
+    }
+
+    #volume-control {
+      position: absolute;
+      top: 110px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #volume-slider {
+      width: 150px;
+      height: 10px;
+      margin-top: 10px;
+      background: #333;
+      border: 4px solid #000;
+      box-shadow: inset -2px -2px 0 #000, inset 2px 2px 0 #666;
+      appearance: none;
+      border-radius: 5px;
+    }
+
+    #volume-slider::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      background: #ffcc00;
+      border: 2px solid #000;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    #volume-slider::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      background: #ffcc00;
+      border: 2px solid #000;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    #volume-label {
+      font-size: 12px;
+      color: #fff;
+      text-shadow: 1px 1px #000;
+      margin-bottom: 5px;
+    }
+
+    h1 {
+      font-size: 48px; 
+      color: #ffcc00;
+      margin-top: 40px;
+      margin-bottom: 60px;
+      text-align: center;
+      text-shadow: 5px 5px #000;
+      animation: fadeIn 1s ease;
+    }
+
+    #tabuleiro {
+      width: 300px; 
+      height: 300px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 40px;
+      background: #1b1b1b;
+      border: 6px solid #ffcc00;
+      box-shadow: 0 0 0 6px #000, 0 0 0 12px #ff0000;
+      padding: 10px;
+      border-radius: 15px;
+      animation: fadeIn 1s ease;
+    }
+
+    .cor {
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    #verde { background: green; }
+    #vermelho { background: red; }
+    #amarelo { background: yellow; }
+    #azul { background: blue; }
+
+
+    .pulsar {
+      animation: pulsarAnim 0.5s ease;
+    }
+
+    @keyframes pulsarAnim {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); opacity: 1; }
+      50% { transform: scale(1.1); box-shadow: 0 0 20px 10px rgba(255, 255, 255, 0.5); opacity: 0.5; }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); opacity: 1; }
+    }
+
+    #botaoIniciar {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 20px auto;
+      padding: 20px 0;
+      border: 4px solid #000;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      background: #ff0000;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+      animation: piscar 1.5s infinite;
+    }
+
+    #botaoIniciar:hover {
+      background: #ffcc00;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #ffaa00;
+    }
+
+    @keyframes piscar {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    #mensagem {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      white-space: pre-line;
+      text-shadow: 1px 1px #000;
+      color: #4ade80;
+      min-height: 20px;
+      animation: fadeIn 1s ease;
+    }
+
+    #contador-container {
+      font-size: 14px;
+      color: #ffcc00;
+      text-shadow: 2px 2px #000;
+      margin-bottom: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 10px;
+      color: #fff;
+      text-shadow: 1px 1px #000;
+      position: absolute;
+      bottom: 10px;
+    }
+
+  
+    #modal-fim {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1b1b1b;
+      border: 6px solid #ffcc00;
+      box-shadow: 0 0 0 6px #000, 0 0 0 12px #ff0000;
+      padding: 30px;
+      text-align: center;
+      z-index: 1000;
+      animation: modalFadeIn 0.5s ease;
+    }
+
+    #modal-fim h3 {
+      font-size: 18px;
+      color: #ffcc00;
+      margin-bottom: 20px;
+      text-shadow: 3px 3px #000;
+    }
+
+    #modal-fim p {
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+
+    .modal-btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 30px;
+      border: 4px solid #000;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 #000;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+    }
+
+    #btn-reiniciar {
+      background: #ff0000;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    #btn-reiniciar:hover {
+      background: #ffcc00;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #ffaa00;
+    }
+
+    #btn-voltar-menu {
+      background: #00cc44;
+      color: #fff;
+      text-shadow: 2px 2px #000;
+    }
+
+    #btn-voltar-menu:hover {
+      background: #66ff66;
+      color: #000;
+      transform: translateY(-3px);
+      box-shadow: 6px 6px 0 #000, inset -3px -3px 0 #33aa33;
+    }
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+
+    .cloud {
+      position: absolute;
+      top: 40px;
+      left: -120px;
+      width: 100px;
+      height: 50px;
+      background: #fff;
+      border: 4px solid #000;
+      border-radius: 10px;
+      animation: moveCloud 25s linear infinite;
+      image-rendering: pixelated;
+    }
+
+    .cloud::before, .cloud::after {
+      content: "";
+      position: absolute;
+      background: #fff;
+      border: 4px solid #000;
+      border-radius: 10px;
+    }
+
+    .cloud::before {
+      width: 50px;
+      height: 30px;
+      top: -15px;
+      left: 10px;
+    }
+
+    .cloud::after {
+      width: 70px;
+      height: 40px;
+      top: 10px;
+      right: -25px;
+    }
+
+    @keyframes moveCloud {
+      from { left: -120px; }
+      to { left: 110%; }
+    }
+
+
+    #teclas-table {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      background: #1b1b1b;
+      border: 6px solid #ffcc00;
+      box-shadow: 0 0 0 6px #000, 0 0 0 12px #ff0000;
+      padding: 15px;
+      text-align: left;
+      font-size: 12px;
+      color: #fff;
+      animation: fadeIn 1s ease;
+    }
+
+    #teclas-table table {
+      border-collapse: collapse;
+    }
+
+    #teclas-table th, #teclas-table td {
+      border: 2px solid #ffcc00;
+      padding: 8px;
+      text-shadow: 1px 1px #000;
+    }
+
+    #teclas-table th {
+      background: #333;
+    }
+
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+        justify-content: flex-start;
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-top: 30px;
+        margin-bottom: 40px;
+      }
+
+      #tabuleiro {
+        width: 250px;
+        height: 250px;
+        gap: 8px;
+        padding: 8px;
+      }
+
+      #botaoIniciar {
+        max-width: 250px;
+        font-size: 12px;
+        padding: 15px 0;
+      }
+
+      #mensagem {
+        font-size: 12px;
+      }
+
+      #contador-container {
+        font-size: 12px;
+      }
+
+      footer {
+        font-size: 8px;
+      }
+
+      #user-info {
+        font-size: 12px;
+        top: 10px;
+        left: 10px;
+      }
+
+      #btn-logout {
+        font-size: 10px;
+        padding: 8px 15px;
+        top: 10px;
+        right: 10px;
+      }
+
+      #btn-toggle-sound {
+        font-size: 10px;
+        padding: 8px 15px;
+        top: 50px;
+        right: 10px;
+      }
+
+      #volume-control {
+        top: 90px;
+        right: 10px;
+      }
+
+      #volume-slider {
+        width: 120px;
+      }
+
+      #modal-fim {
+        width: 90%;
+        padding: 20px;
+      }
+
+      .modal-btn {
+        padding: 10px 20px;
+        font-size: 10px;
+      }
+
+      #teclas-table {
+        position: static; 
+        transform: none;
+        margin-top: 20px;
+        width: 90%;
+        max-width: 300px;
+        font-size: 10px;
+        padding: 10px;
+      }
+
+      #teclas-table th, #teclas-table td {
+        padding: 5px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #tabuleiro {
+        width: 200px;
+        height: 200px;
+        gap: 5px;
+        padding: 5px;
+      }
+
+      .cloud {
+        display: none; 
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cloud"></div>
+
+  <div id="user-info"></div>
+  <button id="btn-logout">LOGOUT</button>
+  <button id="btn-toggle-sound">SOM: ON</button>
+
+  <div id="volume-control">
+    <span id="volume-label">VOLUME</span>
+  
+<input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1" title="Controle de volume">
+
+  </div>
+
+  <h1>SIMON GAME</h1>
+
+  
+  <div id="tabuleiro">
+    <div id="verde" class="cor"></div>
+    <div id="vermelho" class="cor"></div>
+    <div id="amarelo" class="cor"></div>
+    <div id="azul" class="cor"></div>
+  </div>
+
+  
+  <button id="botaoIniciar">START</button>
+
+  <p id="mensagem"></p>
+
+  <p id="contador-container">Contador de pontos: <span id="contador">0</span></p>
+
+ 
+  <div id="teclas-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Tecla</th>
+          <th>Cor</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>W</td>
+          <td>Verde</td>
+        </tr>
+        <tr>
+          <td>D</td>
+          <td>Vermelho</td>
+        </tr>
+        <tr>
+          <td>S</td>
+          <td>Amarelo</td>
+        </tr>
+        <tr>
+          <td>A</td>
+          <td>Azul</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <div id="overlay"></div>
+  <div id="modal-fim">
+    <h3>Fim de Jogo!</h3>
+    <p>Seu score final: <span id="score-final">0</span></p>
+    <button id="btn-reiniciar" class="modal-btn">REINICIAR</button>
+    <button id="btn-voltar-menu" class="modal-btn">VOLTAR AO MENU</button>
+  </div>
+
+  <footer>© 2025 - Simon Game</footer>
+
+  <script>
+    const cores = ["verde", "vermelho", "amarelo", "azul"];
+    let sequencia = [];
+    let cliquesJogador = [];
+    let pontos = 0;
+    let soundEnabled = true; 
+    let volume = 1.0; 
+  
+    window.addEventListener('load', () => {
+      if (!localStorage.getItem('currentUser')) {
+        window.location.href = 'login.html'; 
+      } else {
+        const email = localStorage.getItem('currentUser');
+        const usuario = JSON.parse(localStorage.getItem(email));
+        document.getElementById('user-info').innerText = `Bem-vindo, ${usuario.nome}!`;
+      }
+    });
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const gainNode = audioCtx.createGain();
+    gainNode.gain.value = volume;
+    gainNode.connect(audioCtx.destination);
+
+    const frequencies = {
+      verde: 415,    
+      vermelho: 310, 
+      amarelo: 252,  
+      azul: 209      
+    };
+
+    function playSound(frequency, duration = 500) {
+      if (!soundEnabled) return; 
+      const oscillator = audioCtx.createOscillator();
+      oscillator.type = 'square'; 
+      oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      oscillator.connect(gainNode);
+      oscillator.start();
+      setTimeout(() => {
+        oscillator.stop();
+      }, duration);
+    }
+
+    function playVictorySound() {
+      if (!soundEnabled) return;
+      
+      playSound(415, 200); 
+      setTimeout(() => playSound(523, 200), 200); 
+      setTimeout(() => playSound(659, 400), 400); 
+    }
+
+    function playDefeatSound() {
+      if (!soundEnabled) return;
+   
+      playSound(100, 800);
+    }
+
+    function destacar(cor) {
+      let quadrado = document.getElementById(cor);
+      quadrado.classList.add('pulsar');
+      playSound(frequencies[cor]);
+      if ('vibrate' in navigator) {
+        navigator.vibrate(200);
+      }
+      setTimeout(() => {
+        quadrado.classList.remove('pulsar');
+      }, 500);
+    }
+  
+    function tocarSequencia() {
+      let i = 0;
+      const intervalo = setInterval(() => {
+        destacar(sequencia[i]);
+        i++;
+        if (i >= sequencia.length) {
+          clearInterval(intervalo);
+        }
+      }, 700);
+    }
+  
+    function adicionarCorNaSequencia() {
+      const aleatoria = cores[Math.floor(Math.random() * cores.length)];
+      sequencia.push(aleatoria);
+      tocarSequencia();
+    }
+  
+    function iniciarJogo() {
+      document.getElementById("botaoIniciar").style.animation = "none"; 
+
+      sequencia = [];
+      cliquesJogador = [];
+      pontos = 0;
+      document.getElementById("contador").innerText = pontos;
+      document.getElementById("mensagem").innerText = "Jogo iniciado!";
+      atualizarTema();
+      adicionarCorNaSequencia();
+    }
+
+    function atualizarTema() {
+      
+      let intensidade = Math.min(pontos / 20, 1); 
+      let cor1 = `rgb(${92 - 92 * intensidade}, ${148 - 148 * intensidade}, ${252 - 252 * intensidade})`;
+      let cor2 = `rgb(${142 - 142 * intensidade}, ${216 - 216 * intensidade}, ${255 - 255 * intensidade})`;
+      document.body.style.background = `linear-gradient(${cor1}, ${cor2})`;
+    }
+  
+    function contarPontos() {
+      pontos++;
+      document.getElementById("contador").innerText = pontos;
+      atualizarTema();
+      playVictorySound();
+    }
+  
+    function registrarClique(cor) {
+      cliquesJogador.push(cor);
+  
+      let index = cliquesJogador.length - 1;
+      if (cliquesJogador[index] !== sequencia[index]) {
+        document.getElementById("mensagem").innerText = "";
+        document.getElementById("mensagem").style.color = "#ff4d4d"; 
+        document.getElementById("botaoIniciar").style.animation = "piscar 1.5s infinite"; 
+        mostrarModalFim();
+        cliquesJogador = [];
+        sequencia = [];
+        return;
+      }
+  
+      if (cliquesJogador.length === sequencia.length) {
+        document.getElementById("mensagem").innerText = "Acertou! Próxima rodada...";
+        document.getElementById("mensagem").style.color = "#4ade80"; 
+        contarPontos();
+        cliquesJogador = [];
+        setTimeout(() => {
+          adicionarCorNaSequencia();
+        }, 1000);
+      }
+    }
+
+    function mostrarModalFim() {
+      document.getElementById('score-final').innerText = pontos;
+      document.getElementById('overlay').style.display = 'block';
+      document.getElementById('modal-fim').style.display = 'block';
+    }
+
+    function esconderModalFim() {
+      document.getElementById('overlay').style.display = 'none';
+      document.getElementById('modal-fim').style.display = 'none';
+    }
+  
+    document.getElementById("botaoIniciar").onclick = iniciarJogo;
+  
+    document.getElementById("verde").onclick = () => {
+      destacar("verde");
+      registrarClique("verde");
+    };
+  
+    document.getElementById("vermelho").onclick = () => {
+      destacar("vermelho");
+      registrarClique("vermelho");
+    };
+  
+    document.getElementById("amarelo").onclick = () => {
+      destacar("amarelo");
+      registrarClique("amarelo");
+    };
+  
+    document.getElementById("azul").onclick = () => {
+      destacar("azul");
+      registrarClique("azul");
+    };
+
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key.toUpperCase()) {
+        case 'W':
+          destacar("verde");
+          registrarClique("verde");
+          break;
+        case 'D':
+          destacar("vermelho");
+          registrarClique("vermelho");
+          break;
+        case 'S':
+          destacar("amarelo");
+          registrarClique("amarelo");
+          break;
+        case 'A':
+          destacar("azul");
+          registrarClique("azul");
+          break;
+      }
+    });
+
+   
+    document.getElementById('btn-logout').onclick = () => {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'home.html'; 
+    };
+
+
+    document.getElementById('btn-toggle-sound').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('btn-toggle-sound').innerText = `SOM: ${soundEnabled ? 'ON' : 'OFF'}`;
+    };
+
+
+    document.getElementById('volume-slider').addEventListener('input', (e) => {
+      volume = parseFloat(e.target.value);
+      gainNode.gain.value = volume;
+    });
+
+
+    document.getElementById('btn-reiniciar').onclick = () => {
+      esconderModalFim();
+      iniciarJogo();
+    };
+
+    document.getElementById('btn-voltar-menu').onclick = () => {
+      esconderModalFim();
+      window.location.href = 'home.html';
+    };
+  </script>  
+</body>
+</html>
